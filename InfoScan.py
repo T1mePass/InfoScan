@@ -1,6 +1,17 @@
 import argparse
+from datetime import datetime
+
 import tcpscanner.portscanner as portscanner
 import WebDirScan.WebDirScan as dirscan
+import FingerScan.FingerScan as finger_scan
+import re
+
+# colour
+W = '\033[0m'
+G = '\033[1;32m'
+R = '\033[1;31m'
+O = '\033[1;33m'
+B = '\033[1;34m'
 class InfoScan:
 
     def __init__(self,target_url,thread_num,delay,proxy):
@@ -24,8 +35,93 @@ class InfoScan:
         dir_scanner.set_thread_limit(thread_num=self.thread_num)
         dir_scanner.run()
 
-    def finger_scan(self):
-        return
+
+#  指纹扫描模块
+    def fin_scan(self):
+        # if re.match(r'^https?://{2}\w.+$',self.target):
+        #     print()
+        # else:
+        #     print('当前url格式不符合')
+        #     exit(0)
+
+        print(f'指纹扫描开始，当前扫描的url为{self.target}')
+        cms = finger_scan.Cmsscanner(self.target)
+        fofa_finger = cms.run()
+        banner = []
+
+        for x in fofa_finger:
+            banner.append(x)
+ # todo 通过wappalyzer添加指纹信息
+        try:
+            Wappalyzer = finger_scan.useWappalyzer(self.target)
+
+            for x in Wappalyzer :
+                x = str(x).replace('\\;condfidence:50','')
+                banner.append(x)
+
+        except Exception as e:
+            print("Wappalayzer check error",e)
+            pass
+
+
+        try:
+
+            update = False
+            webanalyzer_banner = finger_scan.webanalyzer.check(self.target,update)
+
+            for x in webanalyzer_banner:
+                banner.append(x)
+        except Exception as e:
+            print('Webanalyzer check error:',e)
+            pass
+
+        print("-"*50)
+
+        banner_tmp = []
+        # print("banner:",banner)
+        banner.sort()
+        banner_ = set(list(banner))
+        # print("banner_:",banner_)
+
+        for x in banner_:
+            if x:
+                flag = 0
+                for y in banner_tmp:
+                    if str(x).lower() in str(y).lower() or str(y).lower() in str(x):
+                        flag = 1
+                        continue
+                if flag == 0:
+                    banner_tmp.append(x)
+
+        banner = banner_tmp
+
+        banner_all = ''
+        cms_name = ''
+        cms_name_flag = 0
+        for banner_tmp2 in banner:
+            banner_all = banner_all + ' | ' + banner_tmp2
+            if banner_tmp2.lower() in finger_scan.cms_finger_list:
+                cms_name = banner_tmp2
+                cms_name_flag = 1
+        banner_all = banner_all.strip()
+        if banner_all.startswith('| '):
+            banner_all = banner_all[1:]
+        if banner_all:
+            print(R, "Banner:", W, G, banner_all, W)
+
+        # if not cms_name_flag:
+        #     if finger_scan.dir_mode == 1:
+        #         cms_name_tmp = finger_scan.finger_query(self.target)
+        #         if cms_name_tmp:
+        #             cms_name = cms_name_tmp['cms_name']
+        if not cms_name:
+            cms_name = 'Not Found'
+        print(R, "CMS_finger:", W, G, cms_name, W)
+        end = datetime.now()
+        print("-" * 50)
+
+
+
 
     def run(self):
         '''
@@ -49,6 +145,7 @@ class InfoScan:
         print('运行成功')
         self.port_scan()
         self.dir_scan()
+        self.fin_scan()
 
 
 def main():

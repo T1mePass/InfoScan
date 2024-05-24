@@ -11,8 +11,9 @@ import requests
 import urllib.parse
 import urllib.request
 from bs4 import BeautifulSoup
-from webanalyzer.utils import update
-from webanalyzer.condition import Condition
+
+from FingerScan.webanalyzer.utils import update
+from FingerScan.webanalyzer.condition import Condition
 
 __all__ = ["WebAnalyzer"]
 

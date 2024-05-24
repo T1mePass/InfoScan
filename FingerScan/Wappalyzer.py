@@ -9,7 +9,7 @@ import pathlib
 import requests
 from datetime import datetime, timedelta
 
-from bs4 import BeautifulSoup  # type: ignore
+from bs4 import BeautifulSoup # type: ignore
 from typing import Union, Optional
 
 logger = logging.getLogger(name="python-Wappalyzer")
@@ -39,7 +39,7 @@ class WebPage:
 
     """
 
-    def __init__(self, url: str, html: str, headers: Mapping[str, Any]):
+    def __init__(self, url:str, html:str, headers:Mapping[str, Any]):
         """
         Initialize a new WebPage object manually.  
 
@@ -53,7 +53,7 @@ class WebPage:
         self.url = url
         self.html = html
         self.headers = headers
-        self.scripts: List[str] = []
+        self.scripts :List[str] = []
 
         try:
             list(self.headers.keys())
@@ -68,15 +68,15 @@ class WebPage:
         """
         self.parsed_html = soup = BeautifulSoup(self.html, 'lxml')
         self.scripts.extend(script['src'] for script in
-                            soup.findAll('script', src=True))
+                        soup.findAll('script', src=True))
         self.meta = {
             meta['name'].lower():
                 meta['content'] for meta in soup.findAll(
-                'meta', attrs=dict(name=True, content=True))
+                    'meta', attrs=dict(name=True, content=True))
         }
 
     @classmethod
-    def new_from_url(cls, url: str, **kwargs: Any) -> 'WebPage':
+    def new_from_url(cls, url: str, **kwargs:Any) -> 'WebPage':
         """
         Constructs a new WebPage object for the URL,
         using the `requests` module to fetch the HTML.
@@ -96,7 +96,7 @@ class WebPage:
         return cls.new_from_response(response)
 
     @classmethod
-    def new_from_response(cls, response: requests.Response) -> 'WebPage':
+    def new_from_response(cls, response:requests.Response) -> 'WebPage':
         """
         Constructs a new WebPage object for the response,
         using the `BeautifulSoup` module to parse the HTML.
@@ -105,9 +105,10 @@ class WebPage:
         """
         return cls(response.url, html=response.text, headers=response.headers)
 
+
     @classmethod
     async def new_from_url_async(cls, url: str, verify: bool = True,
-                                 aiohttp_client_session: aiohttp.ClientSession = None, **kwargs: Any) -> 'WebPage':
+                                 aiohttp_client_session: aiohttp.ClientSession = None, **kwargs:Any) -> 'WebPage':
         """
         Same as new_from_url only Async.
 
@@ -118,15 +119,15 @@ class WebPage:
         >>> from aiohttp import ClientSession
         >>> async with ClientSession() as session:
         ...     page = await WebPage.new_from_url_async(aiohttp_client_session=session)
-
+        
         :param url: URL
         :param aiohttp_client_session: `aiohttp.ClientSession` instance to use, optional.
-        :param verify: (optional) Boolean, it controls whether we verify the SSL certificate validity.
+        :param verify: (optional) Boolean, it controls whether we verify the SSL certificate validity. 
         :param headers: Dict. HTTP Headers to send with the request (optional).
         :param cookies: Dict. HTTP Cookies to send with the request (optional).
         :param timeout: Int. override the session's timeout (optional)
         :param proxy: Proxy URL, `str` or `yarl.URL` (optional).
-        :param \*\*kwargs: Any other arguments are passed to `aiohttp.ClientSession.get` method as well.
+        :param \*\*kwargs: Any other arguments are passed to `aiohttp.ClientSession.get` method as well. 
 
         """
 
@@ -138,7 +139,7 @@ class WebPage:
             return await cls.new_from_response_async(response)
 
     @classmethod
-    async def new_from_response_async(cls, response: aiohttp.ClientResponse) -> 'WebPage':
+    async def new_from_response_async(cls, response:aiohttp.ClientResponse) -> 'WebPage':
         """
         Constructs a new WebPage object for the response,
         using the `BeautifulSoup` module to parse the HTML.
@@ -161,9 +162,9 @@ class Wappalyzer:
     Python Wappalyzer driver.
 
     Consider the following exemples.
-
-    Here is how you can use the latest technologies file from AliasIO/wappalyzer repository.
-
+    
+    Here is how you can use the latest technologies file from AliasIO/wappalyzer repository. 
+    
     .. python::
 
         from Wappalyzer import Wappalyzer
@@ -175,7 +176,7 @@ class Wappalyzer:
 
 
     Here is how you can custom request and headers arguments:
-
+    
     .. python::
 
         import requests
@@ -186,10 +187,10 @@ class Wappalyzer:
 
     """
 
-    def __init__(self, categories: Dict[str, Any], technologies: Dict[str, Any]):
+    def __init__(self, categories:Dict[str, Any], technologies:Dict[str, Any]):
         """
-        Manually initialize a new Wappalyzer instance.
-
+        Manually initialize a new Wappalyzer instance. 
+        
         You might want to use the factory method: `latest`
 
         :param categories: Map of category ids to names, as in ``technologies.json``.
@@ -204,26 +205,26 @@ class Wappalyzer:
             self._prepare_technology(technology)
 
     @classmethod
-    def latest(cls, technologies_file: str = None, update: bool = False) -> 'Wappalyzer':
+    def latest(cls, technologies_file:str=None, update:bool=False) -> 'Wappalyzer':
         """
         Construct a Wappalyzer instance.
-
-        Use ``update=True`` to download the very latest file from internet.
-        Do not update if the file has already been updated in the last 24 hours.
+        
+        Use ``update=True`` to download the very latest file from internet. 
+        Do not update if the file has already been updated in the last 24 hours. 
         *New in version 0.4.0*
 
-        Use ``technologies_file=/some/path/technologies.json`` to load a
-        custom technologies file.
-
+        Use ``technologies_file=/some/path/technologies.json`` to load a 
+        custom technologies file. 
+        
         If no arguments is passed, load the default ``data/technologies.json`` file
         inside the package ressource.
 
         :param technologies_file: File path
-        :param update: Download and use the latest ``technologies.json`` file
-            from `AliasIO/wappalyzer <https://github.com/AliasIO/wappalyzer>`_ repository.
-
+        :param update: Download and use the latest ``technologies.json`` file 
+            from `AliasIO/wappalyzer <https://github.com/AliasIO/wappalyzer>`_ repository.  
+        
         """
-        default = pkg_resources.resource_string(__name__, "technologies.json")
+        default=pkg_resources.resource_string(__name__, "technologies.json")
         defaultobj = json.loads(default)
 
         if technologies_file:
@@ -232,7 +233,7 @@ class Wappalyzer:
         elif update:
             should_update = True
             _technologies_file: pathlib.Path
-            _files = cls._find_files(['HOME', 'APPDATA', ], ['.python-Wappalyzer/technologies.json'])
+            _files = cls._find_files(['HOME', 'APPDATA',], ['.python-Wappalyzer/technologies.json'])
             if _files:
                 _technologies_file = pathlib.Path(_files[0])
                 last_modification_time = datetime.fromtimestamp(_technologies_file.stat().st_mtime)
@@ -242,28 +243,24 @@ class Wappalyzer:
             # Get the lastest file
             if should_update:
                 try:
-                    lastest_technologies_file = requests.get(
-                        'https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/technologies.json')
+                    lastest_technologies_file=requests.get('https://raw.githubusercontent.com/AliasIO/wappalyzer/master/src/technologies.json')
                     obj = lastest_technologies_file.json()
                     _technologies_file = pathlib.Path(cls._find_files(
-                        ['HOME', 'APPDATA', ],
+                        ['HOME', 'APPDATA',],
                         ['.python-Wappalyzer/technologies.json'],
-                        create=True
-                    ).pop())
+                        create = True
+                        ).pop())
 
                     if obj != defaultobj:
                         with _technologies_file.open('w', encoding='utf-8') as tfile:
                             tfile.write(lastest_technologies_file.text)
                         logger.info("python-Wappalyzer technologies.json file updated")
 
-                except Exception as err:  # Or loads default
-                    logger.error(
-                        "Could not download latest Wappalyzer technologies.json file because of error : '{}'. Using default. ".format(
-                            err))
+                except Exception as err: # Or loads default
+                    logger.error("Could not download latest Wappalyzer technologies.json file because of error : '{}'. Using default. ".format(err))
                     obj = defaultobj
             else:
-                logger.debug(
-                    "python-Wappalyzer technologies.json file not updated because already updated in the last 24h")
+                logger.debug("python-Wappalyzer technologies.json file not updated because already updated in the last 24h")
                 with _technologies_file.open('r', encoding='utf-8') as tfile:
                     obj = json.load(tfile)
 
@@ -271,14 +268,15 @@ class Wappalyzer:
         else:
             obj = defaultobj
 
+        
         return cls(categories=obj['categories'], technologies=obj['technologies'])
 
     @staticmethod
     def _find_files(
-            env_location: List[str],
-            potential_files: List[str],
-            default_content: str = "",
-            create: bool = False,
+        env_location: List[str],
+        potential_files: List[str],
+        default_content: str = "",
+        create: bool = False,
     ) -> List[str]:
         """Find existent files based on folders name and file names.
         Arguments:
@@ -354,7 +352,7 @@ class Wappalyzer:
             for name, pattern in list(obj.items()):
                 obj[name] = self._prepare_pattern(obj[name])
 
-    def _prepare_pattern(self, pattern: Union[str, List[str]]) -> List[Dict[str, Any]]:
+    def _prepare_pattern(self, pattern:Union[str, List[str]]) -> List[Dict[str, Any]]:
         """
         Strip out key:value pairs from the pattern and compile the regular
         expression.
@@ -370,7 +368,7 @@ class Wappalyzer:
                 if index == 0:
                     attrs['string'] = expression
                     try:
-                        attrs['regex'] = re.compile(expression, re.I)  # type: ignore
+                        attrs['regex'] = re.compile(expression, re.I) # type: ignore
                     except re.error as err:
                         # Wappalyzer is a JavaScript application therefore some of the regex wont compile in Python.
                         logger.debug(
@@ -379,7 +377,7 @@ class Wappalyzer:
                         )
                         # regex that never matches:
                         # http://stackoverflow.com/a/1845097/413622
-                        attrs['regex'] = re.compile(r'(?!x)x')  # type: ignore
+                        attrs['regex'] = re.compile(r'(?!x)x') # type: ignore
                 else:
                     attr = expression.split(':')
                     if len(attr) > 1:
@@ -439,8 +437,7 @@ class Wappalyzer:
 
         return has_app
 
-    def _set_detected_app(self, app: Dict[str, Any], app_type: str, pattern: Dict[str, Any], value: str,
-                          key='') -> None:
+    def _set_detected_app(self, app: Dict[str, Any], app_type:str, pattern: Dict[str, Any], value:str, key='') -> None:
         """
         Store detected app.
         """
@@ -470,10 +467,9 @@ class Wappalyzer:
                 for index, match in enumerate(matches):
                     # Parse ternary operator
                     ternary = re.search(re.compile('\\\\' + str(index + 1) + '\\?([^:]+):(.*)$', re.I), version)
-                    if ternary and len(ternary.groups()) == 2 and ternary.group(1) is not None and ternary.group(
-                            2) is not None:
+                    if ternary and len(ternary.groups()) == 2 and ternary.group(1) is not None and ternary.group(2) is not None:
                         version = version.replace(ternary.group(0), ternary.group(1) if match != ''
-                        else ternary.group(2))
+                                                  else ternary.group(2))
 
                     # Replace back references
                     version = version.replace('\\' + str(index + 1), match)
@@ -495,12 +491,11 @@ class Wappalyzer:
 
         app['versions'] = sorted(app['versions'], key=self._cmp_to_key(self._sort_app_versions))
 
-    def _get_implied_technologies(self, detected_technologies: Iterable[str]) -> Iterable[str]:
+    def _get_implied_technologies(self, detected_technologies:Iterable[str]) -> Iterable[str]:
         """
         Get the set of technologies implied by `detected_technologies`.
         """
-
-        def __get_implied_technologies(technologies: Iterable[str]) -> Iterable[str]:
+        def __get_implied_technologies(technologies:Iterable[str]) -> Iterable[str] :
             _implied_technologies = set()
             for tech in technologies:
                 try:
@@ -514,7 +509,7 @@ class Wappalyzer:
                             try:
                                 # Use more strict regexp (cause we have already checked the entry of "confidence")
                                 # Also, better way to compile regexp one time, instead of every time
-                                app_name, confidence = self._confidence_regexp.search(implie).groups()  # type: ignore
+                                app_name, confidence = self._confidence_regexp.search(implie).groups() # type: ignore
                                 if int(confidence) >= 50:
                                     _implied_technologies.add(app_name)
                             except (ValueError, AttributeError):
@@ -524,7 +519,7 @@ class Wappalyzer:
             return _implied_technologies
 
         implied_technologies = __get_implied_technologies(detected_technologies)
-        all_implied_technologies: Set[str] = set()
+        all_implied_technologies : Set[str] = set()
 
         # Descend recursively until we've found all implied technologies
         while not all_implied_technologies.issuperset(implied_technologies):
@@ -533,7 +528,7 @@ class Wappalyzer:
 
         return all_implied_technologies
 
-    def get_categories(self, tech_name: str) -> List[str]:
+    def get_categories(self, tech_name:str) -> List[str]:
         """
         Returns a list of the categories for an technology name.
 
@@ -545,7 +540,7 @@ class Wappalyzer:
 
         return cat_names
 
-    def get_versions(self, app_name: str) -> List[str]:
+    def get_versions(self, app_name:str) -> List[str]:
         """
         Retuns a list of the discovered versions for an app name.
 
@@ -553,16 +548,15 @@ class Wappalyzer:
         """
         return [] if 'versions' not in self.technologies[app_name] else self.technologies[app_name]['versions']
 
-    def get_confidence(self, app_name: str) -> Optional[int]:
+    def get_confidence(self, app_name:str) -> Optional[int]:
         """
         Returns the total confidence for an app name.
 
         :param app_name: App name
         """
-        return None if 'confidenceTotal' not in self.technologies[app_name] else self.technologies[app_name][
-            'confidenceTotal']
+        return None if 'confidenceTotal' not in self.technologies[app_name] else self.technologies[app_name]['confidenceTotal']
 
-    def analyze(self, webpage: WebPage) -> Set[str]:
+    def analyze(self, webpage:WebPage) -> Set[str]:
         """
         Return a set of technology that can be detected on the web page.
 
@@ -578,7 +572,7 @@ class Wappalyzer:
 
         return detected_technologies
 
-    def analyze_with_versions(self, webpage: WebPage) -> Dict[str, Dict[str, Any]]:
+    def analyze_with_versions(self, webpage:WebPage) -> Dict[str, Dict[str, Any]]:
         """
         Return a dict of applications and versions that can be detected on the web page.
 
@@ -593,7 +587,7 @@ class Wappalyzer:
 
         return versioned_apps
 
-    def analyze_with_categories(self, webpage: WebPage) -> Dict[str, Dict[str, Any]]:
+    def analyze_with_categories(self, webpage:WebPage) -> Dict[str, Dict[str, Any]]:
         """
         Return a dict of technologies and categories that can be detected on the web page.
 
@@ -615,7 +609,7 @@ class Wappalyzer:
 
         return categorised_technologies
 
-    def analyze_with_versions_and_categories(self, webpage: WebPage) -> Dict[str, Dict[str, Any]]:
+    def analyze_with_versions_and_categories(self, webpage:WebPage) -> Dict[str, Dict[str, Any]]:
         """
         Return a dict of applications and versions and categories that can be detected on the web page.
 
@@ -673,16 +667,15 @@ class Wappalyzer:
 
         return CmpToKey
 
-
-def analyze(url: str,
-            update: bool = False,
-            useragent: str = None,
-            timeout: int = 10,
-            verify: bool = True) -> Dict[str, Dict[str, Any]]:
+def analyze(url:str, 
+            update:bool=False, 
+            useragent:str=None,
+            timeout:int=10,
+            verify:bool=True) -> Dict[str, Dict[str, Any]]:
     """
-    Quick utility method to analyze a website with minimal configurable options.
+    Quick utility method to analyze a website with minimal configurable options. 
 
-    :See: `WebPage` and `Wappalyzer`.
+    :See: `WebPage` and `Wappalyzer`. 
 
     :Parameters:
         - `url`: URL
@@ -690,23 +683,21 @@ def analyze(url: str,
         - `useragent`: Request user agent
         - `timeout`: Request timeout
         - `verify`: SSL cert verify
-
+    
     :Return: 
         `dict`. Just as `Wappalyzer.analyze_with_versions_and_categories`. 
     :Note: More information might be added to the returned values in the future
     """
     # Create Wappalyzer
-    wappalyzer = Wappalyzer.latest(update=update)
+    wappalyzer=Wappalyzer.latest(update=update)
     # Create WebPage
-    headers = {}
+    headers={}
     if useragent:
         headers['User-Agent'] = useragent
-    webpage = WebPage.new_from_url(url,
-                                   headers=headers,
-                                   timeout=timeout,
-                                   verify=verify)
+    webpage=WebPage.new_from_url(url, 
+        headers=headers, 
+        timeout=timeout, 
+        verify=verify)
     # Analyze
     results = wappalyzer.analyze_with_versions_and_categories(webpage)
     return results
-
-

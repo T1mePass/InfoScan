@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 # @Time    : 2021/8/16 上午12:58
 # @Author  : 重剑无锋
@@ -11,7 +11,7 @@ import threading, datetime
 import sys, re, sqlite3, lxml, urllib3
 from bs4 import BeautifulSoup as BS
 from Wappalyzer import Wappalyzer, WebPage
-from webanalyzer import webanalyzer
+from FingerScan.webanalyzer import webanalyzer
 from termcolor import cprint
 import argparse
 
